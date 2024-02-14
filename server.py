@@ -19,7 +19,7 @@ with open(csv_file, 'r') as fd:
     for line in fd.readlines():
         fields = line.split(",")
         index = -1
-        id = int(fields[2])
+        id = fields[2]
         for i, customer in enumerate(customers):
             if customer.id == id:
                 index = i 
@@ -33,7 +33,7 @@ with open(csv_file, 'r') as fd:
 
 customers.sort(key=lambda customer: customer.debt)
 for customer in customers:    
-    print(customers)
+    print(customer)
 
         
 

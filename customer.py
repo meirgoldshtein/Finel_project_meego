@@ -4,7 +4,7 @@ class Customer:
         self._last = last
         self._id = id
         self._phon = phon
-        self._debt = debt
+        self._debt = int(debt)
         self._date = date
 
     @property
@@ -12,19 +12,19 @@ class Customer:
         return self._id
 
     @property
-    def debt(self):
-        return self.debt
+    def debt(self) -> int:
+        return self._debt
     
     
     def add_debt(self, debt):
         if type(debt) is not int:
             print("Error: debt is not an int ! ")
             return
-        self.debt = debt
+        self._debt += debt
 
     
     def __str__(self):
-        return (f"name: {self.first} {self.last} \nid:{ self.id}\ndebt: {self.debt}")
+        return (f"name: {self._first} {self._last} \nid:{ self._id}\ndebt: {self._debt}\n-----------")
 
 
 
