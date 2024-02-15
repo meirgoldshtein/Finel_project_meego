@@ -22,18 +22,16 @@ with open(csv_file, 'r') as fd:
         id = fields[2]
         for i, customer in enumerate(customers):
             if customer.id == id:
-                index = i 
+                customer.add_debt(int(fields[4]))
                 break
-        if index >= 0:
-            customers[index].add_debt(int(fields[4]))
-
         else:
-            customer = Customer(*fields)
-            customers.append(customer)
+            new_customer = Customer(*fields)
+            customers.append(new_customer)
 
 customers.sort(key=lambda customer: customer.debt)
 for customer in customers:    
     print(customer)
+
 
         
 
