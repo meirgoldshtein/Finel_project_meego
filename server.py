@@ -3,6 +3,7 @@ import sys
 import os
 import socket
 from customer import Customer
+import bst
 
 if len(sys.argv) < 2 :
     print("Error: missing csv file name !")
@@ -32,11 +33,20 @@ customers.sort(key=lambda customer: customer.debt)
 for customer in customers:    
     print(customer)
 
+fname_bst = bst.Fname_tree()
+ID_tree = bst.Id_tree()
+
+for customer in customers:
+    n = bst.Node(customer)
+    fname_bst.add_node(n)
+    # ID_tree.add_node(n)
+
+
 while True:
     query = input(">>> ")
     if query == "quit":
         quit()
-        
+
 
         
 

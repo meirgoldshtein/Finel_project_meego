@@ -40,7 +40,7 @@ class Customer:
 
     
     def __str__(self):
-        return (f"name: {self._first} {self._last} \nid:{ self._id}\ndebt: {self._debt}\n-----------")
+        return (f"name: {self._fname} {self._lname} \nid:{ self._id}\ndebt: {self._debt}\n-----------")
 
 
 
