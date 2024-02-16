@@ -1,19 +1,35 @@
 class Customer:
-    def __init__(self, first, last, id ,phon ,debt ,date) -> None:
-        self._first = first
-        self._last = last
+    def __init__(self, fname, lname, id ,phone ,debt ,date) -> None:
+        self._fname = fname
+        self._lname = lname
         self._id = int(id)
-        self._phon = phon
+        self._phone = phone
         self._debt = int(debt)
         self._date = date
 
     @property
+    def fname(self) -> str:
+        return self._fname
+
+    @property
+    def lname(self) -> str:
+        return self._lname
+    
+    @property
     def id(self) -> int:
         return self._id
-
+    
+    @property
+    def phone(self) -> str:
+        return self._phone
+    
     @property
     def debt(self) -> int:
         return self._debt
+
+    @property
+    def data(self) -> str:
+        return self._date
     
     
     def add_debt(self, debt):
