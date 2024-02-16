@@ -2,7 +2,7 @@ class Customer:
     def __init__(self, first, last, id ,phon ,debt ,date) -> None:
         self._first = first
         self._last = last
-        self._id = id
+        self._id = int(id)
         self._phon = phon
         self._debt = int(debt)
         self._date = date

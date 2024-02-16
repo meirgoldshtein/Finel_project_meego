@@ -43,6 +43,21 @@ class Id_tree:
                     temp = temp.left
 
 
+    def search(self, id):
+        if not self.root:
+            return
+        temp = self.root
+        while temp:
+            if temp.id == id:
+                return temp
+            if temp.id < id:
+                temp = temp.right
+            elif temp.id > id:
+                temp = temp.left
+        return -1
+
+
+
 
 
 
