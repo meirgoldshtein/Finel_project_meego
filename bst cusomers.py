@@ -1,15 +1,41 @@
 
 class Node:
-    def __init__(self, first, last, id ,phon ,debt ,date) -> None:
-        self._first = first
-        self._last = last
-        self._id = id
-        self._phon = phon
-        self._debt = int(debt)
-        self._date = date
+    def __init__(self, customer) -> None:
+        self.customer = customer
         self.right = None
         self.left = None
         
+
+
+
+class Fname_tree:
+    
+    def __init__(self) -> None:        
+        self.root = None
+
+
+    def add_node(self, node):
+        if self.root is None:
+            self.root = node
+            return
+        
+        temp = self.root
+        while True:
+            if node.customer.fname > temp.customer.fname:
+                
+                if temp.right is None:
+                    temp.right = node
+                    break
+                else:
+                    temp = temp.right
+            
+            elif node.customer.fname <= temp.customer.fname:
+                
+                if temp.left is None:
+                    temp.left = node
+                    break
+                else:
+                    temp = temp.left
 
 
 
@@ -19,25 +45,25 @@ class Id_tree:
         self.root = None
 
 
-    def add_node(self, customer):
+    def add_node(self, node):
         if self.root is None:
-            self.root = customer
+            self.root = node
             return
         
         temp = self.root
         while True:
-            if customer.id > temp.id:
+            if node.customer.id > temp.customer.id:
                 
                 if temp.right is None:
-                    temp.right = customer
+                    temp.right = node
                     break
                 else:
                     temp = temp.right
             
-            elif customer.id <= temp.id:
+            elif node.customer.id <= temp.customer.id:
                 
                 if temp.left is None:
-                    temp.left = customer
+                    temp.left = node
                     break
                 else:
                     temp = temp.left
@@ -48,11 +74,11 @@ class Id_tree:
             return
         temp = self.root
         while temp:
-            if temp.id == id:
-                return temp
-            if temp.id < id:
+            if temp.customer.id == id:
+                return temp.customer
+            if temp.customer.id < id:
                 temp = temp.right
-            elif temp.id > id:
+            elif temp.customer.id > id:
                 temp = temp.left
         return -1
 
