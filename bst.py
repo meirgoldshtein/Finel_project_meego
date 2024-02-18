@@ -100,7 +100,7 @@ class Debt_tre:
     
     def __init__(self) -> None:        
         self.root = None
-        self.target_list = []
+
 
     def add_node(self, node):
 
@@ -126,24 +126,17 @@ class Debt_tre:
     def search(self, low_debt, high_debt, temp="start"):
         if temp is None or not self.root:
             return
-        right = False
-        left = False
+
         if temp == "start":
             temp = self.root
         
         if low_debt <= temp.customer.debt <= high_debt:
-            right = True
-            left = True
-            self.target_list.append(temp.customer)
-        elif low_debt > temp.customer.debt:
-            right = True
-        elif high_debt < temp.customer.debt:
-            left = True       
+            return [temp.customer.debt] + self.search(self, low_debt, high_debt, temp.right) + self.search(self, low_debt, high_debt, temp.left)
 
-        if right:
-            self.search(self, low_debt, high_debt, temp.right)
-        if left:
-            self.search(self, low_debt, high_debt, temp.left)
+        elif low_debt > temp.customer.debt:
+            return self.search(self, low_debt, high_debt, temp.right)
+        elif high_debt < temp.customer.debt:
+            return self.search(self, low_debt, high_debt, temp.left)
             
 
 
