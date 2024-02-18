@@ -36,7 +36,22 @@ class Fname_tree:
                     return
                 temp = temp.left
 
-
+    def search(self, fname):
+        if not self.root:
+            return
+        
+        target_list = []
+        temp = self.root
+        while temp:
+            if temp.customer.fname == fname:
+                target_list.append(temp.customer)
+                temp = temp.left
+            elif temp.customer.fname < fname:
+                temp = temp.right
+            elif temp.customer.fname > fname:
+                temp = temp.left
+        return target_list
+       
 
 class Lname_tree:
     
@@ -64,11 +79,28 @@ class Lname_tree:
                     return
                 temp = temp.left
 
+    def search(self, lname):
+        if not self.root:
+            return
+        
+        target_list = []
+        temp = self.root
+        while temp:
+            if temp.customer.lname == lname:
+                target_list.append(temp.customer)
+                temp = temp.left
+            elif temp.customer.lname < lname:
+                temp = temp.right
+            elif temp.customer.lname > lname:
+                temp = temp.left
+        return target_list
+
 
 class Debt_tre:
     
     def __init__(self) -> None:        
         self.root = None
+        self.target_list = []
 
     def add_node(self, node):
 
@@ -90,6 +122,33 @@ class Debt_tre:
                     temp.left = node
                     return
                 temp = temp.left
+
+    def search(self, low_debt, high_debt, temp="start"):
+        if temp is None or not self.root:
+            return
+        right = False
+        left = False
+        if temp == "start":
+            temp = self.root
+        
+        if low_debt <= temp.customer.debt <= high_debt:
+            right = True
+            left = True
+            self.target_list.append(temp.customer)
+        elif low_debt > temp.customer.debt:
+            right = True
+        elif high_debt < temp.customer.debt:
+            left = True       
+
+        if right:
+            self.search(self, low_debt, high_debt, temp.right)
+        if left:
+            self.search(self, low_debt, high_debt, temp.left)
+            
+
+
+
+
 
 #  Binary tree sorted by ID
 class Id_tree:
