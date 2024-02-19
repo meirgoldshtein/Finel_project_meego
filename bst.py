@@ -128,19 +128,39 @@ class Debt_tree:
 
     def search(self, low_debt, high_debt, temp="start"):
         if temp is None or not self.root:
-            return
+            return []
 
         if temp == "start":
             temp = self.root
-        
-        if low_debt <= temp.customer.debt <= high_debt:
-            return [temp.customer.debt] + self.search(self, low_debt, high_debt, temp.right) + self.search(self, low_debt, high_debt, temp.left)
 
-        elif low_debt > temp.customer.debt:
-            return self.search(self, low_debt, high_debt, temp.right)
-        elif high_debt < temp.customer.debt:
-            return self.search(self, low_debt, high_debt, temp.left)
-            
+        if low_debt and high_debt:
+            print("1")
+            if low_debt <= temp.customer.debt <= high_debt:
+                return [temp.customer] + self.search(low_debt, high_debt, temp.right) + self.search(low_debt, high_debt, temp.left)
+
+            elif low_debt > temp.customer.debt:
+                return self.search(low_debt, high_debt, temp.right)
+            elif high_debt < temp.customer.debt:
+                return self.search(self, low_debt, high_debt, temp.left)
+        
+        elif low_debt and not high_debt:
+            print("2") 
+            if low_debt <= temp.customer.debt:
+                return [temp.customer] + self.search(low_debt, high_debt, temp.right) + self.search(low_debt, high_debt, temp.left)
+
+            elif low_debt > temp.customer.debt:
+                return self.search(low_debt, high_debt, temp.right)
+
+        elif not low_debt and high_debt: 
+            print("3")           
+            if temp.customer.debt < high_debt:
+                return [temp.customer] + self.search(low_debt, high_debt, temp.right) + self.search(low_debt, high_debt, temp.left)
+
+            elif high_debt == temp.customer.debt:
+                return [temp.customer] + self.search(low_debt, high_debt, temp.left)  
+
+            elif temp.customer.debt > high_debt:  
+                return self.search(low_debt, high_debt, temp.left)
 
 #  Binary tree sorted by ID
 class Id_tree:
