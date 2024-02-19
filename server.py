@@ -15,37 +15,39 @@ if not os.path.exists(csv_file):
         pass
 
 
-customers = []
+customers = {}
 with open(csv_file, 'r') as fd: 
     for line in fd.readlines():
         fields = line.split(",")
-        index = -1
         id = fields[2]
-        for i, customer in enumerate(customers):
-            if customer.id == id:
-                customer.add_debt(int(fields[4]))
-                break
-        else:
+        if not customers.get(id):
             new_customer = Customer(*fields)
-            customers.append(new_customer)
+            customers[id] = new_customer
+        else:        
+            customers[id].add_debt(int(fields[4]))
 
-customers.sort(key=lambda customer: customer.debt)
-for customer in customers:    
-    print(customer)
+
+customers_list = list(customers.values())
+customers_list.sort(key=lambda customer: customer.debt)
+for customer in customers_list:    
+    print(customer.id)
 
 fname_bst = bst.Fname_tree()
+lname_bst = bst.Lname_tree()
+debt_bst = bst.Debt_tree()
 ID_tree = bst.Id_tree()
 
-for customer in customers:
-    n = bst.Node(customer)
-    fname_bst.add_node(n)
-    # ID_tree.add_node(n)
+for customer in customers_list:
+    fname_bst.add_node(customer)
+    lname_bst.add_node(customer)
+    debt_bst.add_node(customer)
+    ID_tree.add_node(customer)
 
 
-while True:
-    query = input(">>> ")
-    if query == "quit":
-        quit()
+# while True:
+#     query = input(">>> ")
+#     if query == "quit":
+#         quit()
 
 
         

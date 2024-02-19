@@ -12,7 +12,9 @@ class Fname_tree:
     def __init__(self) -> None:        
         self.root = None
         
-    def add_node(self, node):
+    def add_node(self, customer):
+
+        node = Node(customer)
 
         if self.root is None:
             self.root = node
@@ -20,9 +22,6 @@ class Fname_tree:
         
         temp = self.root
         while True:
-
-            if node.customer.id == temp.customer.id:
-                return
 
             if node.customer.fname > temp.customer.fname:                
                 if not temp.right:
@@ -58,8 +57,9 @@ class Lname_tree:
     def __init__(self) -> None:        
         self.root = None
         
-    def add_node(self, node):
-
+    def add_node(self, customer):
+        
+        node = Node(customer)
         if self.root is None:
             self.root = node
             return
@@ -96,20 +96,23 @@ class Lname_tree:
         return target_list
 
 
-class Debt_tre:
+class Debt_tree:
     
     def __init__(self) -> None:        
         self.root = None
 
 
-    def add_node(self, node):
-
+    def add_node(self, customer):
+        
+        node = Node(customer)
         if self.root is None:
             self.root = node
             return
         
         temp = self.root
         while True:
+            
+            
             if node.customer.debt > temp.customer.debt:
                 
                 if not temp.right:
@@ -139,33 +142,29 @@ class Debt_tre:
             return self.search(self, low_debt, high_debt, temp.left)
             
 
-
-
-
-
 #  Binary tree sorted by ID
 class Id_tree:
     
     def __init__(self) -> None:        
         self.root = None
         
-    def add_node(self, node):
+    def add_node(self, customer):
+        
+        node = Node(customer)
         if self.root is None:
             self.root = node
             return
         
         temp = self.root
         while True:
-
+    
             if node.customer.id > temp.customer.id:
-                
                 if temp.right is None:
-                    temp.right = node
+                    temp.right = node   
                     return
                 temp = temp.right
-            
-            elif node.customer.id < temp.customer.id:
-                
+           
+            else:                              
                 if temp.left is None:
                     temp.left = node
                     return
