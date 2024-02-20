@@ -16,17 +16,66 @@ if not os.path.exists(csv_file):
         pass
 
 
+
+
+def customer_checking(customer_tata: list):
+
+    massage = ""
+    correct = False
+    date = customer_tata[5]
+    date_split = date.split("/")
+    if len(customer_tata) < 6:
+        massage += ("One or more of the data is missing\n")
+    elif len(customer_tata) > 6:
+        massage +=("Error, too many details have been entered\n")
+    elif not customer_tata[0].isalpha() or not customer_tata[1].isalpha():
+        massage +=("The consumer name must be of type string\n")
+    elif not customer_tata[2].isdigit():
+        massage +=("ID must be numbers only\n")
+    elif len(customer_tata[2]) != 9:
+        massage +=("ID is not valid. Must contain 9 digits\n")
+    elif not customer_tata[3].isdigit():
+        massage +=("Phone number must be numbers only\n")
+    elif len(customer_tata[3]) != 10:
+        massage +=("Phon number is not valid. Must contain 10 digits\n")
+    
+    elif not (date[1] == "/" or date[2] == "/") or not (date[4] == "/" or date[5] == "/"):
+        massage +=("The date structure is incorrect Must be in the format  dd/mm/yyyy\n")
+
+    elif not date_split[0].isdigit() or not 0 <= int(date_split[0]) <= 31:
+        massage +=("The day entered is not valid\n")
+    elif not date_split[1].isdigit() or not 0 <= int(date_split[1]) <= 12:
+        massage +=("The month entered is not valid\n")  
+    elif not date_split[2].rstrip("\n").isdigit() or not 0 <= int(date_split[2]):
+        massage +=("The year entered is not valid\n")      
+    
+    else:
+        correct = True
+    try:
+        float(customer_tata[4])
+    except ValueError:
+        massage +=("Debt must be numbers only\n")
+        correct = False
+    return correct, massage
+
+
 customers = {}
 with open(csv_file, 'r') as fd: 
+    counter = 1
     for line in fd.readlines():
-        fields = line.split(",")
-        id = fields[2]
-        if not customers.get(id):
-            new_customer = Customer(*fields)
-            customers[id] = new_customer
-        else:        
-            customers[id].add_debt(int(fields[4]))
 
+        fields = line.split(",")
+        correcting =  customer_checking(fields)
+        if correcting[0]:
+            id = fields[2]
+            if not customers.get(id):
+                new_customer = Customer(*fields)
+                customers[id] = new_customer
+            else:        
+                customers[id].add_debt(int(fields[4]))
+        else:
+            print(f"Error in line {counter} ->->->{correcting[1]}")
+        counter += 1
 
 customers_list = list(customers.values())
 customers_list.sort(key=lambda customer: customer.debt)
@@ -66,39 +115,7 @@ def is_israeli_id(id):
 
 
 
-def customer_checking(customer: list):
 
-    correct = False
-    if len(customer) < 6:
-        print("One or more of the data is missing")
-    elif len(customer) > 6:
-        print("Error, too many details have been entered")
-    if not customer[0].isalpha() or not customer[1].isalpha():
-        print("The consumer name must be of type string")
-    if not customer[2].isdigit():
-        print("ID must be numbers only")
-    if len(customer[2]) != 9:
-        print("ID is not valid. Must contain 9 digits")
-    if not customer[3].isdigit():
-        print("Phone number must be numbers only")
-    if len(customer[3]) != 10:
-        print("Phon number is not valid. Must contain 10 digits")
-    try:
-        float(customer[4])
-    except ValueError:
-        print("Debt must be numbers only")
-    date = customer[5]
-    if not (date[1] == "/" or date[2] == "/") and (date[4] == "/" or date[5] == "/"):
-        print("The date structure is incorrect\nMust be in the format  dd/mm/yyyy")
-    date = date.split("/")
-    if not date[0].isdigit() or 0 <= int(date[0]) <= 31:
-        print("The day entered is not valid")
-    if not date[1].isdigit() or 0 <= int(date[1]) <= 12:
-        print("The month entered is not valid")  
-    if not date[2].isdigit() or 0 <= int(date[2]):
-        print("The month entered is not valid")      
-    
-    return correct
 
 
 while True:
