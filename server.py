@@ -49,26 +49,38 @@ def print_query(filtered_list):
         print (f"name: {customer.fname} {customer.lname}, ID: {customer.id}, phone: {customer.phone}, debt: {customer.debt}, date: {customer.data}\n")
      
 while True:
-    query = input(">>> ").split(" ")
-    print(query)
-    if query == "quit":
-        quit()
-    elif query[0] == "select":
-        if query[1] == "first" and query[2] == "name" and query[3] == "=":
-            filtered_list = fname_bst.search(query[4])
-        elif query[1] == "last" and query[2] == "name" and query[3] == "=":
-            filtered_list = lname_bst.search(query[4])
-        elif query[1] == "debt" and query[2] == ">":            
-            filtered_list = debt_bst.search_range(int(query[3]), None)           
-        elif query[1] == "debt" and query[2] == "<":
-            filtered_list = debt_bst.search_range(None, int(query[3]))    
-        elif query[1] == "debt" and query[2] == "=":
-            filtered_list = debt_bst.search_equal(int(query[3]))     
-        elif query[1] == "debt" and query[2] == "!=":
-            filtered_list = debt_bst.search_different(int(query[3]))          
-        
-        filtered_list.sort(key=lambda customer: customer.debt)
-        print_query(filtered_list)
+    try:
+        query = input(">>> ").split(" ")
+
+        if query == "quit":
+            quit()
+        elif query[0] == "select":
+            if query[1] == "first" and query[2] == "name" and query[3] == "=":
+                filtered_list = fname_bst.search(query[4])
+            elif query[1] == "last" and query[2] == "name" and query[3] == "=":
+                filtered_list = lname_bst.search(query[4])
+            elif query[1] == "debt" and query[2] == ">":            
+                filtered_list = debt_bst.search_range(int(query[3]), None)           
+            elif query[1] == "debt" and query[2] == "<":
+                filtered_list = debt_bst.search_range(None, int(query[3]))    
+            elif query[1] == "debt" and query[2] == "=":
+                filtered_list = debt_bst.search_equal(int(query[3]))     
+            elif query[1] == "debt" and query[2] == "!=":
+                filtered_list = debt_bst.search_different(int(query[3])) 
+            else:
+                raise ValueError("Invalid query")         
+            
+            if filtered_list:
+                filtered_list.sort(key=lambda customer: customer.debt)    
+                print_query(filtered_list)
+            else:
+                print("No results")
+
+
+
+
+    except ValueError:
+        print("Invalid query please enter again")
 
         
 
