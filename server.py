@@ -66,6 +66,8 @@ while True:
             filtered_list = debt_bst.search_equal(int(query[3]))     
         elif query[1] == "debt" and query[2] == "!=":
             filtered_list = debt_bst.search_different(int(query[3]))          
+        
+        filtered_list.sort(key=lambda customer: customer.debt)
         print_query(filtered_list)
 
         
