@@ -15,6 +15,25 @@ if not os.path.exists(csv_file):
     with open(csv_file, 'w'):
         pass
 
+def set_query_test(query):
+    correct_query = ["first name", "second name", "id", "phone", "date", "dept"]
+    review_query = query.split(",")
+    correct = True
+    message = None
+    query_processed = []
+    
+    i = 0
+    for _ in len(6):
+        detail = review_query[i].split("=")
+        if detail[0].strip() != correct_query[i]:
+            message = (f"Missing or wrong key {correct_query[i]}")
+            correct = False
+            return correct, message, query_processed
+        else:
+            query_list += detail[1]
+    return correct, message, query_processed
+
+
 
 
 
@@ -58,11 +77,23 @@ def customer_checking(customer_tata: list):
         correct = False
     return correct, massage
 
+def add_customer(customer_data):
+    correcting =  customer_checking(fields)
+    if correcting[0]:
+        with open(csv_file, 'w') as d: 
+            d.writelines(customer_data)
+            print("The consumer has been successfully added")
+    else:
+        print(f"Error adding the consumer !! \n{correcting[1]}")
+
+            
+
+
 
 customers = {}
-with open(csv_file, 'r') as fd: 
+with open(csv_file, 'r') as d: 
     counter = 1
-    for line in fd.readlines():
+    for line in d.readlines():
 
         fields = line.split(",")
         correcting =  customer_checking(fields)
@@ -139,12 +170,26 @@ while True:
                 filtered_list = debt_bst.search_different(int(query[3])) 
             else:
                 raise ValueError("Invalid query")         
-            
-            if filtered_list:
-                filtered_list.sort(key=lambda customer: customer.debt)    
-                print_query(filtered_list)
+
+        elif query[0] == "set":
+            testing_query = set_query_test(query[1::])
+            if testing_query[0]:
+                testing_data =  customer_checking(testing_query[2])
+                if testing_data[0]:    
+                    add_customer(testing_query[2])
+                else:
+                    print(testing_data[1])
             else:
-                print("No results")
+                print(testing_query[1])
+                raise ValueError("Invalid query")
+
+
+
+        if filtered_list:
+            filtered_list.sort(key=lambda customer: customer.debt)    
+            print_query(filtered_list)
+        else:
+            print("No results")
 
     except ValueError:
         print("Invalid query please enter again")
