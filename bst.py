@@ -126,7 +126,7 @@ class Debt_tree:
                     return
                 temp = temp.left
 
-    def search(self, low_debt, high_debt, temp="start"):
+    def search_range(self, low_debt, high_debt, temp="start"):
         if temp is None or not self.root:
             return []
 
@@ -134,7 +134,7 @@ class Debt_tree:
             temp = self.root
 
         if low_debt and high_debt:
-            print("1")
+            
             if low_debt <= temp.customer.debt <= high_debt:
                 return [temp.customer] + self.search(low_debt, high_debt, temp.right) + self.search(low_debt, high_debt, temp.left)
 
@@ -144,7 +144,7 @@ class Debt_tree:
                 return self.search(self, low_debt, high_debt, temp.left)
         
         elif low_debt and not high_debt:
-            print("2") 
+             
             if low_debt <= temp.customer.debt:
                 return [temp.customer] + self.search(low_debt, high_debt, temp.right) + self.search(low_debt, high_debt, temp.left)
 
@@ -152,7 +152,7 @@ class Debt_tree:
                 return self.search(low_debt, high_debt, temp.right)
 
         elif not low_debt and high_debt: 
-            print("3")           
+                      
             if temp.customer.debt < high_debt:
                 return [temp.customer] + self.search(low_debt, high_debt, temp.right) + self.search(low_debt, high_debt, temp.left)
 
@@ -161,6 +161,34 @@ class Debt_tree:
 
             elif temp.customer.debt > high_debt:  
                 return self.search(low_debt, high_debt, temp.left)
+
+
+    def search_equal(self, sum, temp="start"):
+        if temp is None or not self.root:
+            return []
+
+        if temp == "start":
+            temp = self.root    
+        if temp.customer.debt == sum:
+            return [temp.customer] + self.search_equal(sum, temp.left)
+        elif temp.customer.debt > sum:
+            return self.search_equal(sum, temp.left)
+        elif temp.customer.debt < sum:
+            return self.search_equal(sum, temp.right)
+ 
+        
+    def search_different(self, sum, temp="start"):
+        if temp is None or not self.root:
+            return []
+
+        if temp == "start":
+            temp = self.root
+        if temp.customer.debt != sum:
+            return [temp.customer] + self.search_different(sum, temp.left) + self.search_different(sum, temp.right)
+        else:
+            return self.search_different(sum, temp.left) + self.search_different(sum, temp.right)
+
+
 
 #  Binary tree sorted by ID
 class Id_tree:

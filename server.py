@@ -31,7 +31,7 @@ with open(csv_file, 'r') as fd:
 customers_list = list(customers.values())
 customers_list.sort(key=lambda customer: customer.debt)
 for customer in customers_list:    
-    print(customer.debt)
+    print(customer.fname + customer.lname)
 
 fname_bst = bst.Fname_tree()
 lname_bst = bst.Lname_tree()
@@ -58,10 +58,14 @@ while True:
             filtered_list = fname_bst.search(query[4])
         elif query[1] == "last" and query[2] == "name" and query[3] == "=":
             filtered_list = lname_bst.search(query[4])
-        elif query[1] == "debt" and query[2] == ">":
-            filtered_list = debt_bst.search(int(query[3]), None)           
+        elif query[1] == "debt" and query[2] == ">":            
+            filtered_list = debt_bst.search_range(int(query[3]), None)           
         elif query[1] == "debt" and query[2] == "<":
-            filtered_list = debt_bst.search(None, int(query[3]))       
+            filtered_list = debt_bst.search_range(None, int(query[3]))    
+        elif query[1] == "debt" and query[2] == "=":
+            filtered_list = debt_bst.search_equal(int(query[3]))     
+        elif query[1] == "debt" and query[2] == "!=":
+            filtered_list = debt_bst.search_different(int(query[3]))          
         print_query(filtered_list)
 
         
