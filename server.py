@@ -15,26 +15,33 @@ if not os.path.exists(csv_file):
     with open(csv_file, 'w'):
         pass
 
-def set_query_test(query):
-    correct_query = ["first name", "second name", "id", "phone", "date", "dept"]
-    review_query = query.split(",")
+
+def set_query_test(raw_query):
+    correct_query = ["first name", "second name", "id", "phone", "dept", "date"]
+    disjointed_query = raw_query[3::].split(",")
+    print(disjointed_query)
     correct = True
     message = None
     query_processed = []
     
     i = 0
-    for _ in len(6):
-        detail = review_query[i].split("=")
+    for _ in range(6):
+        detail = disjointed_query[i].split("=")
+        print(detail)
         if detail[0].strip() != correct_query[i]:
+            print(detail)
+            print(detail[i])
+            print(detail[0].strip())
+            print(correct_query[i])
             message = (f"Missing or wrong key {correct_query[i]}")
             correct = False
             return correct, message, query_processed
         else:
-            query_list += detail[1]
+            query_processed.append(detail[1])
+            
+            i += 1
+    print(query_processed)
     return correct, message, query_processed
-
-
-
 
 
 def customer_checking(customer_tata: list):
@@ -57,8 +64,10 @@ def customer_checking(customer_tata: list):
         massage +=("Phone number must be numbers only\n")
     elif len(customer_tata[3]) != 10:
         massage +=("Phon number is not valid. Must contain 10 digits\n")
+    elif not (customer_tata[4].lstrip("-")).isdigit():
+        massage +=("Debt is not valid. Must contain only digits\n")
     
-    elif not (date[1] == "/" or date[2] == "/") or not (date[4] == "/" or date[5] == "/"):
+    elif len(date_split) != 3:
         massage +=("The date structure is incorrect Must be in the format  dd/mm/yyyy\n")
 
     elif not date_split[0].isdigit() or not 0 <= int(date_split[0]) <= 31:
@@ -78,13 +87,13 @@ def customer_checking(customer_tata: list):
     return correct, massage
 
 def add_customer(customer_data):
-    correcting =  customer_checking(fields)
-    if correcting[0]:
-        with open(csv_file, 'w') as d: 
+        customer_data[-1] += "\n"
+        customer_data = ",".join(customer_data)
+        print(customer_data)
+        with open(csv_file, 'a') as d: 
             d.writelines(customer_data)
             print("The consumer has been successfully added")
-    else:
-        print(f"Error adding the consumer !! \n{correcting[1]}")
+
 
             
 
@@ -96,6 +105,7 @@ with open(csv_file, 'r') as d:
     for line in d.readlines():
 
         fields = line.split(",")
+
         correcting =  customer_checking(fields)
         if correcting[0]:
             id = fields[2]
@@ -144,55 +154,64 @@ def is_israeli_id(id):
         return True
     return False
 
+def q_select(query):  
+    
+    query = query.split(" ")
+
+    if query[1] == "first" and query[2] == "name" and query[3] == "=":
+        filtered_list = fname_bst.search(query[4])
+    elif query[1] == "last" and query[2] == "name" and query[3] == "=":
+        filtered_list = lname_bst.search(query[4])
+    elif query[1] == "debt" and query[2] == ">":            
+        filtered_list = debt_bst.search_range(int(query[3]), None)           
+    elif query[1] == "debt" and query[2] == "<":
+        filtered_list = debt_bst.search_range(None, int(query[3]))    
+    elif query[1] == "debt" and query[2] == "=":
+        filtered_list = debt_bst.search_equal(int(query[3]))     
+    elif query[1] == "debt" and query[2] == "!=":
+        filtered_list = debt_bst.search_different(int(query[3])) 
+
+    if filtered_list:
+        filtered_list.sort(key=lambda customer: customer.debt)    
+        print_query(filtered_list)
+    else:
+        print("No results")
 
 
-
-
-
-while True:
-    try:
-        query = input(">>> ").split(" ")
-
-        if query == "quit":
-            quit()
-        elif query[0] == "select":
-            if query[1] == "first" and query[2] == "name" and query[3] == "=":
-                filtered_list = fname_bst.search(query[4])
-            elif query[1] == "last" and query[2] == "name" and query[3] == "=":
-                filtered_list = lname_bst.search(query[4])
-            elif query[1] == "debt" and query[2] == ">":            
-                filtered_list = debt_bst.search_range(int(query[3]), None)           
-            elif query[1] == "debt" and query[2] == "<":
-                filtered_list = debt_bst.search_range(None, int(query[3]))    
-            elif query[1] == "debt" and query[2] == "=":
-                filtered_list = debt_bst.search_equal(int(query[3]))     
-            elif query[1] == "debt" and query[2] == "!=":
-                filtered_list = debt_bst.search_different(int(query[3])) 
-            else:
-                raise ValueError("Invalid query")         
-
-        elif query[0] == "set":
-            testing_query = set_query_test(query[1::])
+def q_set(query):
+            testing_query = set_query_test(query)
             if testing_query[0]:
                 testing_data =  customer_checking(testing_query[2])
-                if testing_data[0]:    
+                if testing_data[0]: 
+                    print(testing_query[2])
                     add_customer(testing_query[2])
+                    print("The addition was successful")
                 else:
                     print(testing_data[1])
             else:
                 print(testing_query[1])
-                raise ValueError("Invalid query")
 
 
-
-        if filtered_list:
-            filtered_list.sort(key=lambda customer: customer.debt)    
-            print_query(filtered_list)
+while True:
+    # try:
+        
+        query = input(">>> ")
+        if query.startswith("select"):
+            q_select(query)
+        elif query.startswith("set"):
+            q_set(query)        
+        elif query == "quit":
+            quit()
         else:
-            print("No results")
+    #         # raise ValueError("Invalid query")
+    # # except ValueError:
+            print("Invalid query please enter again")
 
-    except ValueError:
-        print("Invalid query please enter again")
+
+
+
 
         
+
+# set first name=Moshe, second name=Berdichevsky, id=123456789, phone=0544123456, dept=-300, date=3/4/2022
 
