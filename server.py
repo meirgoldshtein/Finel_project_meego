@@ -87,16 +87,20 @@ def customer_checking(customer_tata: list):
     return correct, massage
 
 def add_customer(customer_data):
+        
+        new_customer = Customer(*customer_data)
+        fname_bst.add_node(new_customer)
+        lname_bst.add_node(new_customer)
+        debt_bst.add_node(new_customer)
+        ID_tree.add_node(new_customer)
+        
         customer_data[-1] += "\n"
         customer_data = ",".join(customer_data)
         print(customer_data)
         with open(csv_file, 'a') as d: 
             d.writelines(customer_data)
             print("The consumer has been successfully added")
-
-
-            
-
+        
 
 
 customers = {}
@@ -105,7 +109,7 @@ with open(csv_file, 'r') as d:
     for line in d.readlines():
 
         fields = line.split(",")
-
+        print(fields)
         correcting =  customer_checking(fields)
         if correcting[0]:
             id = fields[2]
@@ -156,6 +160,7 @@ def is_israeli_id(id):
 
 def q_select(query):  
     
+    filtered_list = []
     query = query.split(" ")
 
     if query[1] == "first" and query[2] == "name" and query[3] == "=":
@@ -193,7 +198,7 @@ def q_set(query):
 
 
 while True:
-    # try:
+    try:
         
         query = input(">>> ")
         if query.startswith("select"):
@@ -203,8 +208,8 @@ while True:
         elif query == "quit":
             quit()
         else:
-    #         # raise ValueError("Invalid query")
-    # # except ValueError:
+            raise ValueError("Invalid query")
+    except ValueError:
             print("Invalid query please enter again")
 
 
@@ -213,5 +218,5 @@ while True:
 
         
 
-# set first name=Moshe, second name=Berdichevsky, id=123456789, phone=0544123456, dept=-300, date=3/4/2022
+# set first name=Meir, second name=Berdichevsky, id=123456789, phone=0544123456, dept=-300, date=3/4/2022
 
