@@ -162,6 +162,19 @@ class Debt_tree:
             elif temp.customer.debt > high_debt:  
                 return self.search(low_debt, high_debt, temp.left)
 
+ 
+    def search_equal_id(self, sum, id, father="start", child="start"):
+        
+        if child == "start":
+            child = self.root 
+        if child.left is None or child.right is None or not self.root:
+            return   
+        if child.customer.debt == sum and child.customer.id == id:
+            return father, child
+        elif child.customer.debt >= sum:
+            return self.search_equal(sum, id, child, child.left)
+        elif child.customer.debt < sum:
+            return self.search_equal(sum, id, child, child.right)
 
     def search_equal(self, sum, temp="start"):
         if temp is None or not self.root:
@@ -189,32 +202,32 @@ class Debt_tree:
             return self.search_different(sum, temp.left) + self.search_different(sum, temp.right)
 
 
-    def search_equal_debt_ID(self, debt, id, temp="start"):
-        if temp is None or not self.root:
-            return None, None
+    # def search_equal_debt_ID(self, debt, id, temp="start"):
+    #     if temp is None or not self.root:
+    #         return None, None
 
-        if temp == "start":
-            temp = self.root    
-            if temp.id == id and temp.debt == debt and temp is self.root:
-                return None, temp
+    #     if temp == "start":
+    #         temp = self.root    
+    #         if temp.customer.id == id and temp.customer.debt == debt and temp is self.root:
+    #             return None, temp
         
-        if temp.left:
-            if temp.left.customer.id != id:
-                if temp.left.customer.debt >= debt:
-                    return self.search_equal(debt, id, temp.left)
-                elif temp.left.customer.debt < debt:
-                    return self.search_equal(debt, id, temp.right)
-            elif temp.left.customer.id == id and temp.left.customer.debt == debt:
-                return temp, temp.left
+    #     if temp.left:
+    #         if temp.left.customer.id != id:
+    #             if temp.left.customer.debt >= debt:
+    #                 return self.search_equal(debt, id, temp.left)
+    #             elif temp.left.customer.debt < debt:
+    #                 return self.search_equal(debt, id, temp.right)
+    #         elif temp.left.customer.id == id and temp.left.customer.debt == debt:
+    #             return temp, temp.left
         
-        if temp.right:
-            if temp.right.customer.id != id:
-                if temp.right.customer.debt >= debt:
-                    return self.search_equal(debt, id, temp.left)
-                elif temp.right.customer.debt < debt:
-                    return self.search_equal(debt, id, temp.right)
-            elif temp.right.customer.id == id and temp.right.customer.debt == debt:
-                return temp, temp.left       
+    #     if temp.right:
+    #         if temp.right.customer.id != id:
+    #             if temp.right.customer.debt >= debt:
+    #                 return self.search_equal(debt, id, temp.left)
+    #             elif temp.right.customer.debt < debt:
+    #                 return self.search_equal(debt, id, temp.right)
+    #         elif temp.right.customer.id == id and temp.right.customer.debt == debt:
+    #             return temp, temp.left       
 
     def max_node(self, father, node):
         if not node or not node.right:
@@ -222,15 +235,16 @@ class Debt_tree:
         return self.max_node( node, node.right)
 
 
-    def update_dept(self, id, new_debt):
+    def update_dept(self, id, old_debt, new_debt, id_tree):
         
-        target_customer = Id_tree.search(id)
+        target_customer = id_tree.search(id)
         if target_customer:
             prev_debt = target_customer.debt
         else:
             print("customer not fund")
             return False
-        father, child = self.search_equal_ID(prev_debt, id,) 
+        father, child = self.search_equal_debt_ID(prev_debt, id,) 
+        print(father.customer.id)
 
         father_max, max_node = self.max_node(None, child.left)    
             

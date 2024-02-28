@@ -19,7 +19,6 @@ if not os.path.exists(csv_file):
 def set_query_test(raw_query):
     correct_query = ["first name", "second name", "id", "phone", "dept", "date"]
     disjointed_query = raw_query[3::].split(",")
-    print(disjointed_query)
     correct = True
     message = None
     query_processed = []
@@ -27,12 +26,7 @@ def set_query_test(raw_query):
     i = 0
     for _ in range(6):
         detail = disjointed_query[i].split("=")
-        print(detail)
         if detail[0].strip() != correct_query[i]:
-            print(detail)
-            print(detail[i])
-            print(detail[0].strip())
-            print(correct_query[i])
             message = (f"Missing or wrong key {correct_query[i]}")
             correct = False
             return correct, message, query_processed
@@ -40,7 +34,6 @@ def set_query_test(raw_query):
             query_processed.append(detail[1])
             
             i += 1
-    print(query_processed)
     return correct, message, query_processed
 
 
@@ -88,18 +81,33 @@ def customer_checking(customer_tata: list):
 
 def add_customer(customer_data):
         
+    customer_data[-1] += "\n"
+    customer_data = ",".join(customer_data)
+    print(customer_data)
+    with open(csv_file, 'a') as d: 
+        d.writelines(customer_data)        
+    
+    customer_data = customer_data.split(",")
+    id = customer_data[2]
+    new_debt = customer_data[4]
+    existing_customer = customers.get(id)
+    if not existing_customer:
+               
+        print(customer_data)
         new_customer = Customer(*customer_data)
+        customers[id] = new_customer       
         fname_bst.add_node(new_customer)
         lname_bst.add_node(new_customer)
         debt_bst.add_node(new_customer)
         ID_tree.add_node(new_customer)
-        
-        customer_data[-1] += "\n"
-        customer_data = ",".join(customer_data)
-        print(customer_data)
-        with open(csv_file, 'a') as d: 
-            d.writelines(customer_data)
-            print("The consumer has been successfully added")
+    else:
+        old_debt = existing_customer.debt
+        print(old_debt)
+        id = int(id)
+        debt_bst.update_dept(id, old_debt, new_debt, ID_tree)
+
+    print("The consumer has been successfully added")
+
         
 
 
@@ -188,9 +196,9 @@ def q_set(query):
             if testing_query[0]:
                 testing_data =  customer_checking(testing_query[2])
                 if testing_data[0]: 
-                    print(testing_query[2])
-                    add_customer(testing_query[2])
-                    print("The addition was successful")
+                    # if int(testing_query[2][4]):
+                        add_customer(testing_query[2])
+                        print("The addition was successful")
                 else:
                     print(testing_data[1])
             else:
@@ -198,7 +206,7 @@ def q_set(query):
 
 
 while True:
-    try:
+    # try:
         
         query = input(">>> ")
         if query.startswith("select"):
@@ -207,10 +215,10 @@ while True:
             q_set(query)        
         elif query == "quit":
             quit()
-        else:
-            raise ValueError("Invalid query")
-    except ValueError:
-            print("Invalid query please enter again")
+    #     else:
+    #         raise ValueError("Invalid query")
+    # except ValueError:
+    #         print("Invalid query please enter again")
 
 
 
