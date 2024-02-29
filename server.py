@@ -1,9 +1,10 @@
-import csv
+
 import sys
 import os
-import socket
 from customer import Customer
 import bst
+import threading
+import socket
 
 if len(sys.argv) < 2 :
     csv_file = ('./db.csv')
@@ -108,7 +109,7 @@ def add_customer(customer_data):
 
     print("The consumer has been successfully added")
 
-        
+
 
 
 customers = {}
@@ -170,55 +171,95 @@ def q_select(query):
     
     filtered_list = []
     query = query.split(" ")
-
-    if query[1] == "first" and query[2] == "name" and query[3] == "=":
-        filtered_list = fname_bst.search(query[4])
-    elif query[1] == "last" and query[2] == "name" and query[3] == "=":
-        filtered_list = lname_bst.search(query[4])
-    elif query[1] == "debt" and query[2] == ">":            
-        filtered_list = debt_bst.search_range(int(query[3]), None)           
-    elif query[1] == "debt" and query[2] == "<":
-        filtered_list = debt_bst.search_range(None, int(query[3]))    
-    elif query[1] == "debt" and query[2] == "=":
-        filtered_list = debt_bst.search_equal(int(query[3]))     
-    elif query[1] == "debt" and query[2] == "!=":
-        filtered_list = debt_bst.search_different(int(query[3])) 
-
+    try:
+        if query[1] == "first" and query[2] == "name" and query[3] == "=":
+            print(query[4])
+            filtered_list = fname_bst.search(query[4])
+        elif query[1] == "last" and query[2] == "name" and query[3] == "=":
+            filtered_list = lname_bst.search(query[4])
+        elif query[1] == "debt" and query[2] == ">":            
+            filtered_list = debt_bst.search_range(int(query[3]), None)           
+        elif query[1] == "debt" and query[2] == "<":
+            filtered_list = debt_bst.search_range(None, int(query[3]))    
+        elif query[1] == "debt" and query[2] == "=":
+            filtered_list = debt_bst.search_equal(int(query[3]))     
+        elif query[1] == "debt" and query[2] == "!=":
+            filtered_list = debt_bst.search_different(int(query[3])) 
+    except:
+        return "The query is invalid"
     if filtered_list:
         filtered_list.sort(key=lambda customer: customer.debt)    
-        print_query(filtered_list)
+        return filtered_list
     else:
-        print("No results")
+        return "no result"
+
 
 
 def q_set(query):
-            testing_query = set_query_test(query)
-            if testing_query[0]:
-                testing_data =  customer_checking(testing_query[2])
-                if testing_data[0]: 
-                    # if int(testing_query[2][4]):
-                        add_customer(testing_query[2])
-                        print("The addition was successful")
-                else:
-                    print(testing_data[1])
-            else:
-                print(testing_query[1])
+    
+    testing_query = set_query_test(query)
+    if testing_query[0]:
+        testing_data =  customer_checking(testing_query[2])
+        if testing_data[0]: 
+            # if int(testing_query[2][4]):
+                add_customer(testing_query[2])
+                return "The addition was successful"
+        else:
+            return testing_data[1]
+    else:
+        return testing_query[1]
 
 
+
+
+
+host = '127.0.0.1'
+port = 12345
+
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+server_socket.bind((host, port))
+server_socket.listen(30)
+print(f"Server listening on {host}:{port}")
+
+
+def processing(query):
+
+        # try:
+            if query.startswith("select"):
+                to_send = q_select(query)
+            elif query.startswith("set"):
+                to_send = q_set(query)        
+            elif query == "quit":
+                quit()
+            return to_send
+        #     else:
+        #         raise ValueError("Invalid query")
+        # except ValueError:
+        #         print("Invalid query please enter again")
+         
+
+
+
+client_socket, client_address = server_socket.accept()
 while True:
-    # try:
-        
-        query = input(">>> ")
-        if query.startswith("select"):
-            q_select(query)
-        elif query.startswith("set"):
-            q_set(query)        
-        elif query == "quit":
-            quit()
-    #     else:
-    #         raise ValueError("Invalid query")
-    # except ValueError:
-    #         print("Invalid query please enter again")
+    
+    print(f"Accepted connection from {client_address}")
+    query = client_socket.recv(1024).decode('utf-8')   
+    to_send = processing(query)
+    if type(to_send) is list:
+        print(to_send)
+        for customer in to_send:
+            to_send = (f"name: {customer.fname} {customer.lname}, ID: {customer.id}, phone: {customer.phone}, debt: {customer.debt}, date: {customer.data}\n")
+            to_send = to_send.encode('utf-8')
+            client_socket.sendall(to_send)
+    
+    else:
+        to_send = to_send.encode('utf-8')
+        client_socket.sendall(to_send)
+    print("An answer to the query has been sent")
+
+
 
 
 
