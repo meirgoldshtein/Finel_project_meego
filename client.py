@@ -17,8 +17,11 @@ while True:
         client_socket.close()
     
     client_socket.sendall(message.encode('utf-8'))
-    data = client_socket.recv(1024)
-    print(f"Received from server: \n{data.decode('utf-8')}")
+    while True:   
+        data = client_socket.recv(1024)
+        if data.decode('utf-8') == "finish":
+            break
+        print(f"{data.decode('utf-8')}\n")
 
 
     

@@ -114,11 +114,10 @@ def add_customer(customer_data):
 
 customers = {}
 with open(csv_file, 'r') as d: 
-    counter = 1
+    line_counter = 1
     for line in d.readlines():
 
         fields = line.split(",")
-        print(fields)
         correcting =  customer_checking(fields)
         if correcting[0]:
             id = fields[2]
@@ -128,28 +127,20 @@ with open(csv_file, 'r') as d:
             else:        
                 customers[id].add_debt(int(fields[4]))
         else:
-            print(f"Error in line {counter} ->->->{correcting[1]}")
-        counter += 1
+            print(f"Error in line {line_counter} ->->->{correcting[1]}")
+        line_counter += 1
 
-customers_list = list(customers.values())
-customers_list.sort(key=lambda customer: customer.debt)
-for customer in customers_list:    
-    print(customer.fname + customer.lname)
 
 fname_bst = bst.Fname_tree()
 lname_bst = bst.Lname_tree()
 debt_bst = bst.Debt_tree()
 ID_tree = bst.Id_tree()
 
-for customer in customers_list:
+for customer in customers.values():
     fname_bst.add_node(customer)
     lname_bst.add_node(customer)
     debt_bst.add_node(customer)
     ID_tree.add_node(customer)
-
-def print_query(filtered_list):
-    for customer in filtered_list:
-        print (f"name: {customer.fname} {customer.lname}, ID: {customer.id}, phone: {customer.phone}, debt: {customer.debt}, date: {customer.data}\n")
 
 
 def is_israeli_id(id):
@@ -180,7 +171,9 @@ def q_select(query):
         elif query[1] == "debt" and query[2] == ">":            
             filtered_list = debt_bst.search_range(int(query[3]), None)           
         elif query[1] == "debt" and query[2] == "<":
-            filtered_list = debt_bst.search_range(None, int(query[3]))    
+            print(query[3])
+            filtered_list = debt_bst.search_range(None, int(query[3])) 
+            print(filtered_list)   
         elif query[1] == "debt" and query[2] == "=":
             filtered_list = debt_bst.search_equal(int(query[3]))     
         elif query[1] == "debt" and query[2] == "!=":
@@ -208,8 +201,6 @@ def q_set(query):
             return testing_data[1]
     else:
         return testing_query[1]
-
-
 
 
 
@@ -247,16 +238,19 @@ while True:
     print(f"Accepted connection from {client_address}")
     query = client_socket.recv(1024).decode('utf-8')   
     to_send = processing(query)
+    end = "finish".encode('utf-8')
     if type(to_send) is list:
         print(to_send)
         for customer in to_send:
             to_send = (f"name: {customer.fname} {customer.lname}, ID: {customer.id}, phone: {customer.phone}, debt: {customer.debt}, date: {customer.data}\n")
             to_send = to_send.encode('utf-8')
             client_socket.sendall(to_send)
+        
     
     else:
         to_send = to_send.encode('utf-8')
         client_socket.sendall(to_send)
+    client_socket.sendall(end)
     print("An answer to the query has been sent")
 
 

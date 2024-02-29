@@ -136,31 +136,31 @@ class Debt_tree:
         if low_debt and high_debt:
             
             if low_debt <= temp.customer.debt <= high_debt:
-                return [temp.customer] + self.search(low_debt, high_debt, temp.right) + self.search(low_debt, high_debt, temp.left)
+                return [temp.customer] + self.search_range(low_debt, high_debt, temp.right) + self.search_range(low_debt, high_debt, temp.left)
 
             elif low_debt > temp.customer.debt:
-                return self.search(low_debt, high_debt, temp.right)
+                return self.search_range(low_debt, high_debt, temp.right)
             elif high_debt < temp.customer.debt:
-                return self.search(self, low_debt, high_debt, temp.left)
+                return self.search_range(self, low_debt, high_debt, temp.left)
         
         elif low_debt and not high_debt:
              
             if low_debt <= temp.customer.debt:
-                return [temp.customer] + self.search(low_debt, high_debt, temp.right) + self.search(low_debt, high_debt, temp.left)
+                return [temp.customer] + self.search_range(low_debt, high_debt, temp.right) + self.search_range(low_debt, high_debt, temp.left)
 
             elif low_debt > temp.customer.debt:
-                return self.search(low_debt, high_debt, temp.right)
+                return self.search_range(low_debt, high_debt, temp.right)
 
         elif not low_debt and high_debt: 
                       
             if temp.customer.debt < high_debt:
-                return [temp.customer] + self.search(low_debt, high_debt, temp.right) + self.search(low_debt, high_debt, temp.left)
+                return [temp.customer] + self.search_range(low_debt, high_debt, temp.right) + self.search_range(low_debt, high_debt, temp.left)
 
             elif high_debt == temp.customer.debt:
-                return [temp.customer] + self.search(low_debt, high_debt, temp.left)  
+                return [temp.customer] + self.search_range(low_debt, high_debt, temp.left)  
 
             elif temp.customer.debt > high_debt:  
-                return self.search(low_debt, high_debt, temp.left)
+                return self.search_range(low_debt, high_debt, temp.left)
 
  
     def search_equal_id(self, sum, id, father="start", child="start"):
