@@ -90,7 +90,7 @@ def add_customer(customer_data):
     
     customer_data = customer_data.split(",")
     id = customer_data[2]
-    new_debt = customer_data[4]
+    new_debt = int(customer_data[4])
     existing_customer = customers.get(id)
     if not existing_customer:
                
@@ -101,13 +101,13 @@ def add_customer(customer_data):
         lname_bst.add_node(new_customer)
         debt_bst.add_node(new_customer)
         ID_tree.add_node(new_customer)
+        return "The consumer has been successfully added"
     else:
         old_debt = existing_customer.debt
         print(old_debt)
         id = int(id)
         debt_bst.update_dept(id, old_debt, new_debt, ID_tree)
-
-    print("The consumer has been successfully added")
+        return "The consumer has been successfully update"
 
 
 
@@ -261,5 +261,5 @@ while True:
 
         
 
-# set first name=Meir, second name=Berdichevsky, id=123456789, phone=0544123456, dept=-300, date=3/4/2022
+# set first name=Meir, second name=Berdichevsky, id=123422789, phone=0544123456, dept=-300, date=3/4/2022
 

@@ -163,18 +163,18 @@ class Debt_tree:
                 return self.search_range(low_debt, high_debt, temp.left)
 
  
-    def search_equal_id(self, sum, id, father="start", child="start"):
+    def search_equal_id(self, sum, id, father=None, child="start"):
         
         if child == "start":
             child = self.root 
         if child.left is None or child.right is None or not self.root:
-            return   
+            return father, child
         if child.customer.debt == sum and child.customer.id == id:
             return father, child
         elif child.customer.debt >= sum:
-            return self.search_equal(sum, id, child, child.left)
+            return self.search_equal_id(sum, id, child, child.left)
         elif child.customer.debt < sum:
-            return self.search_equal(sum, id, child, child.right)
+            return self.search_equal_id(sum, id, child, child.right)
 
     def search_equal(self, sum, temp="start"):
         if temp is None or not self.root:
@@ -232,18 +232,18 @@ class Debt_tree:
     def max_node(self, father, node):
         if not node or not node.right:
             return father, node
-        return self.max_node( node, node.right)
+        return self.max_node(node, node.right)
 
 
     def update_dept(self, id, old_debt, new_debt, id_tree):
         
         target_customer = id_tree.search(id)
         if target_customer:
-            prev_debt = target_customer.debt
+            prev_debt = old_debt
         else:
             print("customer not fund")
             return False
-        father, child = self.search_equal_debt_ID(prev_debt, id,) 
+        father, child = self.search_equal_id(prev_debt, id,) 
         print(father.customer.id)
 
         father_max, max_node = self.max_node(None, child.left)    
@@ -270,12 +270,14 @@ class Debt_tree:
         
         elif not father and child:   
             max_node.right, max_node.left = child.right, child.left
+            self.root = max_node
             if father_max:
                 father_max.right = None
             
         
-        child.customer.debt = new_debt    
-        self.add_node(Node(child.customer))          
+        child.customer.debt = new_debt
+        print(child.customer.debt)    
+        self.add_node(child.customer)          
 
 
 

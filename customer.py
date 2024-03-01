@@ -26,7 +26,11 @@ class Customer:
     @property
     def debt(self) -> int:
         return self._debt
-
+    
+    @debt.setter
+    def debt(self, new):
+        self._debt += new
+    
     @property
     def data(self) -> str:
         return self._date
