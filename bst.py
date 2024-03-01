@@ -200,34 +200,7 @@ class Debt_tree:
             return [temp.customer] + self.search_different(sum, temp.left) + self.search_different(sum, temp.right)
         else:
             return self.search_different(sum, temp.left) + self.search_different(sum, temp.right)
-
-
-    # def search_equal_debt_ID(self, debt, id, temp="start"):
-    #     if temp is None or not self.root:
-    #         return None, None
-
-    #     if temp == "start":
-    #         temp = self.root    
-    #         if temp.customer.id == id and temp.customer.debt == debt and temp is self.root:
-    #             return None, temp
-        
-    #     if temp.left:
-    #         if temp.left.customer.id != id:
-    #             if temp.left.customer.debt >= debt:
-    #                 return self.search_equal(debt, id, temp.left)
-    #             elif temp.left.customer.debt < debt:
-    #                 return self.search_equal(debt, id, temp.right)
-    #         elif temp.left.customer.id == id and temp.left.customer.debt == debt:
-    #             return temp, temp.left
-        
-    #     if temp.right:
-    #         if temp.right.customer.id != id:
-    #             if temp.right.customer.debt >= debt:
-    #                 return self.search_equal(debt, id, temp.left)
-    #             elif temp.right.customer.debt < debt:
-    #                 return self.search_equal(debt, id, temp.right)
-    #         elif temp.right.customer.id == id and temp.right.customer.debt == debt:
-    #             return temp, temp.left       
+     
 
     def max_node(self, father, node):
         if not node or not node.right:
@@ -280,13 +253,6 @@ class Debt_tree:
         self.add_node(child.customer)          
 
 
-
-                
-        
-        
-
-
-
 #  Binary tree sorted by ID
 class Id_tree:
     
@@ -330,10 +296,39 @@ class Id_tree:
         return False
 
 
+class Date_tree:
+
+    def __init__(self) -> None:        
+        self.root = None
+        
+
+    def calculate(date):
+        date = date.split("/")
+        return (int(date[2])*365) + (int(date[1])*31) + (int(date[0]))
 
 
+    def add_node(self, customer):
+        
+        node = Node(customer)
+        if self.root is None:
+            self.root = node
+            return
 
-
+               
+        temp = self.root
+        while True:
+ 
+            if self.calculate(node.customer.date) > self.calculate(temp.customer.date):
+                if temp.right is None:
+                    temp.right = node   
+                    return
+                temp = temp.right
+           
+            else:                              
+                if temp.left is None:
+                    temp.left = node
+                    return
+                temp = temp.left
 
 
 
