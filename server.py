@@ -163,11 +163,27 @@ def q_select(query):
     filtered_list = []
     query = query.split(" ")
     try:
-        if query[1] == "first" and query[2] == "name" and query[3] == "=":
-            print(query[4])
-            filtered_list = fname_bst.search(query[4])
-        elif query[1] == "last" and query[2] == "name" and query[3] == "=":
-            filtered_list = lname_bst.search(query[4])
+        if query[1] == "first" and query[2] == "name":
+            if query[3] == "=":
+                filtered_list = fname_bst.search(query[4])
+            elif query[3] == ">":
+                filtered_list = fname_bst.search_high(query[4])
+            elif query[3] == "<":
+                filtered_list = fname_bst.search_low(query[4])
+            elif query[3] == "!=":
+                filtered_list = fname_bst.search_different(query[4])
+
+
+        elif query[1] == "last" and query[2] == "name":
+            if query[3] == "=":
+                filtered_list = lname_bst.search(query[4])
+            elif query[3] == ">":
+                filtered_list = lname_bst.search_high(query[4])
+            elif query[3] == "<":
+                filtered_list = lname_bst.search_low(query[4])
+            elif query[3] == "!=":
+                filtered_list = lname_bst.search_different(query[4])            
+        
         elif query[1] == "debt" and query[2] == ">":            
             filtered_list = debt_bst.search_range(int(query[3]), None)           
         elif query[1] == "debt" and query[2] == "<":
@@ -178,6 +194,18 @@ def q_select(query):
             filtered_list = debt_bst.search_equal(int(query[3]))     
         elif query[1] == "debt" and query[2] == "!=":
             filtered_list = debt_bst.search_different(int(query[3])) 
+    
+        elif query[1] == "id":
+            if query[3] == "=":
+                filtered_list = ID_tree.search(query[4])
+            elif query[3] == ">":
+                filtered_list = ID_tree.search_high(query[4])
+            elif query[3] == "<":
+                filtered_list = ID_tree.search_low(query[4])
+            elif query[3] == "!=":
+                filtered_list = ID_tree.search_different(query[4])
+    
+    
     except:
         return "The query is invalid"
     if filtered_list:

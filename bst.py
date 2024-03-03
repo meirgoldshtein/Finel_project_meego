@@ -50,7 +50,45 @@ class Fname_tree:
             elif temp.customer.fname > fname:
                 temp = temp.left
         return target_list
-       
+
+    def search_high(self, fname, temp="start"):
+        
+        if not self.root:
+            return[]
+               
+        if temp == "start":
+            temp = self.root
+        if temp.customer.fname <= fname:
+            return self.search_high(fname, temp.right)
+        elif temp.customer.fname > fname:
+            return [temp.customer] + self.search_high(fname, temp.right)+self.search_high(fname, temp.left)
+
+    def search_low(self, fname, temp="start"):
+        
+        if not self.root:
+            return[]
+               
+        if temp == "start":
+            temp = self.root
+            target_list = []
+        if temp.customer.fname <= fname:
+            target_list.append(temp.customer)
+            return[temp.customer]+ self.search_high(fname, temp.right)+self.search_high(fname, temp.left)
+        elif temp.customer.fname > fname:           
+            return self.search_high(fname, temp.left)
+
+    
+    def search_different(self, fname, temp="start"):
+        
+        if not self.root:
+            return[]
+               
+        if temp == "start":
+            temp = self.root
+        if temp.customer.fname != fname:
+            return [temp.customer] + self.search_high(fname, temp.right) + self.search_high(fname, temp.left) 
+        else:
+            return self.search_high(fname, temp.right) + self.search_high(fname, temp.left)     
 
 class Lname_tree:
     
@@ -95,6 +133,44 @@ class Lname_tree:
                 temp = temp.left
         return target_list
 
+    def search_high(self, lname, temp="start"):
+        
+        if not self.root:
+            return[]
+               
+        if temp == "start":
+            temp = self.root
+        if temp.customer.lname <= lname:
+            return self.search_high(lname, temp.right)
+        elif temp.customer.lname > lname:
+            return [temp.customer] + self.search_high(lname, temp.right)+self.search_high(lname, temp.left)
+
+    def search_low(self, lname, temp="start"):
+        
+        if not self.root:
+            return[]
+               
+        if temp == "start":
+            temp = self.root
+            target_list = []
+        if temp.customer.lname <= lname:
+            target_list.append(temp.customer)
+            return[temp.customer]+ self.search_high(lname, temp.right)+self.search_high(lname, temp.left)
+        elif temp.customer.lname > lname:           
+            return self.search_high(lname, temp.left)
+
+    
+    def search_different(self, lname, temp="start"):
+        
+        if not self.root:
+            return[]
+               
+        if temp == "start":
+            temp = self.root
+        if temp.customer.lname != lname:
+            return [temp.customer] + self.search_high(lname, temp.right) + self.search_high(lname, temp.left) 
+        else:
+            return self.search_high(lname, temp.right) + self.search_high(lname, temp.left)  
 
 class Debt_tree:
     
@@ -163,18 +239,6 @@ class Debt_tree:
                 return self.search_range(low_debt, high_debt, temp.left)
 
  
-    def search_equal_id(self, sum, id, father=None, child="start"):
-        
-        if child == "start":
-            child = self.root 
-        if child.left is None or child.right is None or not self.root:
-            return father, child
-        if child.customer.debt == sum and child.customer.id == id:
-            return father, child
-        elif child.customer.debt >= sum:
-            return self.search_equal_id(sum, id, child, child.left)
-        elif child.customer.debt < sum:
-            return self.search_equal_id(sum, id, child, child.right)
 
     def search_equal(self, sum, temp="start"):
         if temp is None or not self.root:
@@ -200,7 +264,21 @@ class Debt_tree:
             return [temp.customer] + self.search_different(sum, temp.left) + self.search_different(sum, temp.right)
         else:
             return self.search_different(sum, temp.left) + self.search_different(sum, temp.right)
-     
+
+
+    def search_equal_id(self, sum, id, father=None, child="start"):
+        
+        if child == "start":
+            child = self.root 
+        if child.left is None or child.right is None or not self.root:
+            return father, child
+        if child.customer.debt == sum and child.customer.id == id:
+            return father, child
+        elif child.customer.debt >= sum:
+            return self.search_equal_id(sum, id, child, child.left)
+        elif child.customer.debt < sum:
+            return self.search_equal_id(sum, id, child, child.right)
+
 
     def max_node(self, father, node):
         if not node or not node.right:
@@ -296,6 +374,46 @@ class Id_tree:
         return False
 
 
+    def search_high(self, id, temp="start"):
+        
+        if not self.root:
+            return[]
+               
+        if temp == "start":
+            temp = self.root
+        if temp.customer.id <= id:
+            return self.search_high(id, temp.right)
+        elif temp.customer.id > id:
+            return [temp.customer] + self.search_high(id, temp.right)+self.search_high(id, temp.left)
+
+    def search_low(self, id, temp="start"):
+        
+        if not self.root:
+            return[]
+               
+        if temp == "start":
+            temp = self.root
+            target_list = []
+        if temp.customer.id <= id:
+            target_list.append(temp.customer)
+            return[temp.customer]+ self.search_high(id, temp.right)+self.search_high(id, temp.left)
+        elif temp.customer.id > id:           
+            return self.search_high(id, temp.left)
+
+    
+    def search_different(self, id, temp="start"):
+        
+        if not self.root:
+            return[]
+               
+        if temp == "start":
+            temp = self.root
+        if temp.customer.id != id:
+            return [temp.customer] + self.search_high(id, temp.right) + self.search_high(id, temp.left) 
+        else:
+            return self.search_high(id, temp.right) + self.search_high(id, temp.left) 
+
+
 class Date_tree:
 
     def __init__(self) -> None:        
@@ -332,4 +450,56 @@ class Date_tree:
 
 
 
+    def search(self, data):
+        if not self.root:
+            return
+        temp = self.root
+        while temp:
+            if self.calculate(temp.customer.data) == self.calculate(data):
+                return temp.customer
+            if self.calculate(temp.customer.data) < self.calculate(data):
+                temp = temp.right
+            elif self.calculate(temp.customer.data) > self.calculate(data):
+                temp = temp.left
+        return False
+
+
+    def search_high(self, data, temp="start"):
+        
+        if not self.root:
+            return[]
+               
+        if temp == "start":
+            temp = self.root
+        if temp.customer.data <= data:
+            return self.search_high(data, temp.right)
+        elif temp.customer.data > data:
+            return [temp.customer] + self.search_high(data, temp.right)+self.search_high(data, temp.left)
+
+    def search_low(self, data, temp="start"):
+        
+        if not self.root:
+            return[]
+               
+        if temp == "start":
+            temp = self.root
+            target_list = []
+        if temp.customer.data <= data:
+            target_list.append(temp.customer)
+            return[temp.customer]+ self.search_high(data, temp.right)+self.search_high(data, temp.left)
+        elif temp.customer.data > data:           
+            return self.search_high(data, temp.left)
+
+    
+    def search_different(self, data, temp="start"):
+        
+        if not self.root:
+            return[]
+               
+        if temp == "start":
+            temp = self.root
+        if temp.customer.data != data:
+            return [temp.customer] + self.search_high(data, temp.right) + self.search_high(data, temp.left) 
+        else:
+            return self.search_high(data, temp.right) + self.search_high(data, temp.left) 
         
