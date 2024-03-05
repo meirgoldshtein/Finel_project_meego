@@ -3,15 +3,15 @@ import sys
 import os
 from customer import Customer
 import bst
-import threading
+import pickle
 import socket
 
 if len(sys.argv) < 2 :
     csv_file = ('./db.csv')
-    print("Error: missing csv file name !")
+    # print("Error: missing csv file name !")
 
-
-# csv_file = (sys.argv[1])
+else:
+    csv_file = (sys.argv[1])
 if not os.path.exists(csv_file):
     with open(csv_file, 'w'):
         pass
@@ -162,52 +162,52 @@ def q_select(query):
     
     filtered_list = []
     query = query.split(" ")
-    try:
-        if query[1] == "first" and query[2] == "name":
-            if query[3] == "=":
-                filtered_list = fname_bst.search(query[4])
-            elif query[3] == ">":
-                filtered_list = fname_bst.search_high(query[4])
-            elif query[3] == "<":
-                filtered_list = fname_bst.search_low(query[4])
-            elif query[3] == "!=":
-                filtered_list = fname_bst.search_different(query[4])
+    # try:
+    if query[1] == "first" and query[2] == "name":
+        if query[3] == "=":
+            filtered_list = fname_bst.search(query[4])
+        elif query[3] == ">":
+            filtered_list = fname_bst.search_high(query[4])
+        elif query[3] == "<":
+            filtered_list = fname_bst.search_low(query[4])
+        elif query[3] == "!=":
+            filtered_list = fname_bst.search_different(query[4])
 
 
-        elif query[1] == "last" and query[2] == "name":
-            if query[3] == "=":
-                filtered_list = lname_bst.search(query[4])
-            elif query[3] == ">":
-                filtered_list = lname_bst.search_high(query[4])
-            elif query[3] == "<":
-                filtered_list = lname_bst.search_low(query[4])
-            elif query[3] == "!=":
-                filtered_list = lname_bst.search_different(query[4])            
-        
-        elif query[1] == "debt" and query[2] == ">":            
-            filtered_list = debt_bst.search_range(int(query[3]), None)           
-        elif query[1] == "debt" and query[2] == "<":
-            print(query[3])
-            filtered_list = debt_bst.search_range(None, int(query[3])) 
-            print(filtered_list)   
-        elif query[1] == "debt" and query[2] == "=":
-            filtered_list = debt_bst.search_equal(int(query[3]))     
-        elif query[1] == "debt" and query[2] == "!=":
-            filtered_list = debt_bst.search_different(int(query[3])) 
+    elif query[1] == "last" and query[2] == "name":
+        if query[3] == "=":
+            filtered_list = lname_bst.search(query[4])
+        elif query[3] == ">":
+            filtered_list = lname_bst.search_high(query[4])
+        elif query[3] == "<":
+            filtered_list = lname_bst.search_low(query[4])
+        elif query[3] == "!=":
+            filtered_list = lname_bst.search_different(query[4])            
     
-        elif query[1] == "id":
-            if query[3] == "=":
-                filtered_list = ID_tree.search(query[4])
-            elif query[3] == ">":
-                filtered_list = ID_tree.search_high(query[4])
-            elif query[3] == "<":
-                filtered_list = ID_tree.search_low(query[4])
-            elif query[3] == "!=":
-                filtered_list = ID_tree.search_different(query[4])
-    
-    
-    except:
-        return "The query is invalid"
+    elif query[1] == "debt" and query[2] == ">":            
+        filtered_list = debt_bst.search_range(int(query[3]), None)           
+    elif query[1] == "debt" and query[2] == "<":
+        print(query[3])
+        filtered_list = debt_bst.search_range(None, int(query[3])) 
+        print(filtered_list)   
+    elif query[1] == "debt" and query[2] == "=":
+        filtered_list = debt_bst.search_equal(int(query[3]))     
+    elif query[1] == "debt" and query[2] == "!=":
+        filtered_list = debt_bst.search_different(int(query[3])) 
+
+    elif query[1] == "id":
+        if query[3] == "=":
+            filtered_list = ID_tree.search(query[4])
+        elif query[3] == ">":
+            filtered_list = ID_tree.search_high(query[4])
+        elif query[3] == "<":
+            filtered_list = ID_tree.search_low(query[4])
+        elif query[3] == "!=":
+            filtered_list = ID_tree.search_different(query[4])
+
+
+    # except:
+    #     return "The query is invalid"
     if filtered_list:
         filtered_list.sort(key=lambda customer: customer.debt)    
         return filtered_list
@@ -238,7 +238,7 @@ port = 12345
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 server_socket.bind((host, port))
-server_socket.listen(30)
+server_socket.listen(3)
 print(f"Server listening on {host}:{port}")
 
 
@@ -264,21 +264,22 @@ client_socket, client_address = server_socket.accept()
 while True:
     
     print(f"Accepted connection from {client_address}")
-    query = client_socket.recv(1024).decode('utf-8')   
+    query = client_socket.recv(4096).decode('utf-8')   
     to_send = processing(query)
-    end = "finish".encode('utf-8')
+    end = "$finish$".encode('utf-8')
     if type(to_send) is list:
         print(to_send)
         for customer in to_send:
             to_send = (f"name: {customer.fname} {customer.lname}, ID: {customer.id}, phone: {customer.phone}, debt: {customer.debt}, date: {customer.data}\n")
             to_send = to_send.encode('utf-8')
-            client_socket.sendall(to_send)
+            client_socket.send(to_send)
+            print("miaue")
         
     
     else:
         to_send = to_send.encode('utf-8')
-        client_socket.sendall(to_send)
-    client_socket.sendall(end)
+        client_socket.send(to_send)
+    client_socket.send(end)
     print("An answer to the query has been sent")
 
 

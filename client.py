@@ -16,10 +16,10 @@ while True:
     if message == "quit":
         client_socket.close()
     
-    client_socket.sendall(message.encode('utf-8'))
+    client_socket.send(message.encode('utf-8'))
     while True:   
-        data = client_socket.recv(1024)
-        if data.decode('utf-8') == "finish":
+        data = client_socket.recv(4096)
+        if "$finish$" in data.decode('utf-8'):
             break
         print(f"{data.decode('utf-8')}\n")
 

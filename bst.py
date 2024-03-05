@@ -51,44 +51,43 @@ class Fname_tree:
                 temp = temp.left
         return target_list
 
-    def search_high(self, fname, temp="start"):
+    def search_high(self, fname):
         
-        if not self.root:
-            return[]
-               
-        if temp == "start":
-            temp = self.root
-        if temp.customer.fname <= fname:
-            return self.search_high(fname, temp.right)
-        elif temp.customer.fname > fname:
-            return [temp.customer] + self.search_high(fname, temp.right)+self.search_high(fname, temp.left)
-
+        result = []
+        def traverse(node):
+            if node:
+                if node.customer.fname > fname:
+                    result.append(node.customer)
+                traverse(node.left)
+                traverse(node.right)                              
+        traverse(self.root)
+        return result
+    
+    
     def search_low(self, fname, temp="start"):
         
-        if not self.root:
+        if not self.root or not temp:
             return[]
                
         if temp == "start":
             temp = self.root
-            target_list = []
         if temp.customer.fname <= fname:
-            target_list.append(temp.customer)
-            return[temp.customer]+ self.search_high(fname, temp.right)+self.search_high(fname, temp.left)
+            return[temp.customer] + self.search_low(fname, temp.right) + self.search_low(fname, temp.left)
         elif temp.customer.fname > fname:           
-            return self.search_high(fname, temp.left)
+            return self.search_low(fname, temp.left)
 
     
     def search_different(self, fname, temp="start"):
         
-        if not self.root:
+        if not self.root or not temp:
             return[]
                
         if temp == "start":
             temp = self.root
         if temp.customer.fname != fname:
-            return [temp.customer] + self.search_high(fname, temp.right) + self.search_high(fname, temp.left) 
+            return [temp.customer] + self.search_different(fname, temp.right) + self.search_different(fname, temp.left) 
         else:
-            return self.search_high(fname, temp.right) + self.search_high(fname, temp.left)     
+            return self.search_high(fname, temp.right) + self.search_different(fname, temp.left)     
 
 class Lname_tree:
     
@@ -135,7 +134,7 @@ class Lname_tree:
 
     def search_high(self, lname, temp="start"):
         
-        if not self.root:
+        if not self.root or not temp:
             return[]
                
         if temp == "start":
@@ -147,30 +146,27 @@ class Lname_tree:
 
     def search_low(self, lname, temp="start"):
         
-        if not self.root:
+        if not self.root or not temp:
             return[]
                
         if temp == "start":
             temp = self.root
-            target_list = []
         if temp.customer.lname <= lname:
-            target_list.append(temp.customer)
-            return[temp.customer]+ self.search_high(lname, temp.right)+self.search_high(lname, temp.left)
+            return[temp.customer]+ self.search_low(lname, temp.right)+self.search_low(lname, temp.left)
         elif temp.customer.lname > lname:           
-            return self.search_high(lname, temp.left)
+            return self.search_low(lname, temp.left)
 
     
     def search_different(self, lname, temp="start"):
         
-        if not self.root:
-            return[]
-               
+        if not self.root or not temp:
+            return[]              
         if temp == "start":
             temp = self.root
         if temp.customer.lname != lname:
-            return [temp.customer] + self.search_high(lname, temp.right) + self.search_high(lname, temp.left) 
+            return [temp.customer] + self.search_different(lname, temp.right) + self.search_different(lname, temp.left) 
         else:
-            return self.search_high(lname, temp.right) + self.search_high(lname, temp.left)  
+            return self.search_different(lname, temp.right) + self.search_different(lname, temp.left)  
 
 class Debt_tree:
     
@@ -376,7 +372,7 @@ class Id_tree:
 
     def search_high(self, id, temp="start"):
         
-        if not self.root:
+        if not self.root or not temp:
             return[]
                
         if temp == "start":
@@ -388,30 +384,28 @@ class Id_tree:
 
     def search_low(self, id, temp="start"):
         
-        if not self.root:
+        if not self.root or not temp:
             return[]
                
         if temp == "start":
             temp = self.root
-            target_list = []
         if temp.customer.id <= id:
-            target_list.append(temp.customer)
-            return[temp.customer]+ self.search_high(id, temp.right)+self.search_high(id, temp.left)
+            return[temp.customer]+ self.search_low(id, temp.right)+self.search_low(id, temp.left)
         elif temp.customer.id > id:           
-            return self.search_high(id, temp.left)
+            return self.search_low(id, temp.left)
 
     
     def search_different(self, id, temp="start"):
         
-        if not self.root:
+        if not self.root or not temp:
             return[]
                
         if temp == "start":
             temp = self.root
         if temp.customer.id != id:
-            return [temp.customer] + self.search_high(id, temp.right) + self.search_high(id, temp.left) 
+            return [temp.customer] + self.search_different(id, temp.right) + self.search_different(id, temp.left) 
         else:
-            return self.search_high(id, temp.right) + self.search_high(id, temp.left) 
+            return self.search_different(id, temp.right) + self.search_different(id, temp.left) 
 
 
 class Date_tree:
