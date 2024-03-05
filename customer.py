@@ -32,7 +32,7 @@ class Customer:
         self._debt += new
     
     @property
-    def data(self) -> str:
+    def date(self) -> str:
         return self._date
     
     

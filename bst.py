@@ -1,3 +1,5 @@
+from datetime import datetime
+
 # A node object for a binary tree that contains a pointer to a consumer object, and its two children
 class Node:
     def __init__(self, customer) -> None:
@@ -362,7 +364,7 @@ class Id_tree:
         temp = self.root
         while temp:
             if temp.customer.id == id:
-                return temp.customer
+                return [temp.customer]
             if temp.customer.id < id:
                 temp = temp.right
             elif temp.customer.id > id:
@@ -380,7 +382,7 @@ class Id_tree:
         if temp.customer.id <= id:
             return self.search_high(id, temp.right)
         elif temp.customer.id > id:
-            return [temp.customer] + self.search_high(id, temp.right) + self.search_high(id, temp.left)
+            return [temp.customer] + self.search_high(id, temp.right) +self.search_high(id, temp.left)
 
     def search_low(self, id, temp="start"):
         
@@ -414,9 +416,25 @@ class Date_tree:
         self.root = None
         
 
-    def calculate(date):
-        date = date.split("/")
-        return (int(date[2])*365) + (int(date[1])*31) + (int(date[0]))
+    def compare_dates(self, date1, date2):
+        date1 = date1.split("/")
+        date2 = date2.split("/")
+        if date1[2] < date2[2]:
+            return 1
+        elif date1[2] > date2[2]:
+            return -1
+        elif date1[2] == date2[2]:
+            if date1[1] < date2[1]:
+                return 1
+            elif date1[1] > date2[1]:
+                return -1
+            elif date1[1] == date2[1]:    
+                if date1[0] < date2[0]:
+                    return 1
+                elif date1[0] > date2[0]:
+                    return -1
+                elif date1[0] == date2[0]:
+                    return 0
 
 
     def add_node(self, customer):
@@ -429,8 +447,8 @@ class Date_tree:
                
         temp = self.root
         while True:
- 
-            if self.calculate(node.customer.date) > self.calculate(temp.customer.date):
+            compare = self.compare_dates(node.customer.date, temp.customer.date)
+            if compare == -1:
                 if temp.right is None:
                     temp.right = node   
                     return
@@ -443,55 +461,58 @@ class Date_tree:
                 temp = temp.left
 
 
-
-    def search(self, data):
+    def search(self, date):
         if not self.root:
             return
+        to_return = []
+        compare = self.compare_dates(temp.customer.date ,date)
         temp = self.root
         while temp:
-            if self.calculate(temp.customer.data) == self.calculate(data):
-                return temp.customer
-            if self.calculate(temp.customer.data) < self.calculate(data):
-                temp = temp.right
-            elif self.calculate(temp.customer.data) > self.calculate(data):
+            if compare == 0:
+                to_return.append(temp.customer)
                 temp = temp.left
-        return False
+            elif compare == 1:
+                temp = temp.left
+            else:
+                temp = temp.right
+        return to_return
 
 
-    def search_high(self, data, temp="start"):
+    def search_high(self, date, temp="start"):
         
-        if not self.root:
-            return[]
-               
+        if not self.root or not temp:
+            return[]           
         if temp == "start":
             temp = self.root
-        if temp.customer.data <= data:
-            return self.search_high(data, temp.right)
-        elif temp.customer.data > data:
-            return [temp.customer] + self.search_high(data, temp.right) + self.search_high(data, temp.left)
+        compare = self.compare_dates(temp.customer.date ,date)
+        if compare == 1:
+            return self.search_high(date, temp.right)
+        else:
+            return [temp.customer] + self.search_high(date, temp.right) + self.search_high(date, temp.left)
 
-    def search_low(self, data, temp="start"):
+
+    def search_low(self, date, temp="start"):
         
-        if not self.root:
-            return[]
-               
+        if not self.root or not temp:
+            return[]               
         if temp == "start":
             temp = self.root
-        if temp.customer.data <= data:
-            return[temp.customer]+ self.search_low(data, temp.right)+self.search_low(data, temp.left)
-        elif temp.customer.data > data:           
-            return self.search_low(data, temp.left)
+        compare = self.compare_dates(temp.customer.date ,date)
+        if compare > -1:
+            return[temp.customer]+ self.search_low(date, temp.right) + self.search_low(date, temp.left)
+        else:           
+            return self.search_low(date, temp.left)
 
     
-    def search_different(self, data, temp="start"):
+    def search_different(self, date, temp="start"):
         
-        if not self.root:
-            return[]
-               
+        if not self.root or not temp:
+            return[]     
         if temp == "start":
             temp = self.root
-        if temp.customer.data != data:
-            return [temp.customer] + self.search_different(data, temp.right) + self.search_different(data, temp.left) 
+        compare = self.compare_dates(temp.customer.date ,date)  
+        if compare != 0:
+            return [temp.customer] + self.search_different(date, temp.right) + self.search_different(date, temp.left) 
         else:
-            return self.search_different(data, temp.right) + self.search_different(data, temp.left) 
+            return self.search_different(date, temp.right) + self.search_different(date, temp.left) 
         

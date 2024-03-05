@@ -3,7 +3,6 @@ import sys
 import os
 from customer import Customer
 import bst
-import pickle
 import socket
 
 if len(sys.argv) < 2 :
@@ -38,27 +37,27 @@ def set_query_test(raw_query):
     return correct, message, query_processed
 
 
-def customer_checking(customer_tata: list):
+def customer_checking(customer_data: list):
 
     massage = ""
     correct = False
-    date = customer_tata[5]
+    date = customer_data[5]
     date_split = date.split("/")
-    if len(customer_tata) < 6:
+    if len(customer_data) < 6:
         massage += ("One or more of the data is missing\n")
-    elif len(customer_tata) > 6:
+    elif len(customer_data) > 6:
         massage +=("Error, too many details have been entered\n")
-    elif not customer_tata[0].isalpha() or not customer_tata[1].isalpha():
+    elif not customer_data[0].isalpha() or not customer_data[1].isalpha():
         massage +=("The consumer name must be of type string\n")
-    elif not customer_tata[2].isdigit():
+    elif not customer_data[2].isdigit():
         massage +=("ID must be numbers only\n")
-    elif len(customer_tata[2]) != 9:
+    elif len(customer_data[2]) != 9:
         massage +=("ID is not valid. Must contain 9 digits\n")
-    elif not customer_tata[3].isdigit():
+    elif not customer_data[3].isdigit():
         massage +=("Phone number must be numbers only\n")
-    elif len(customer_tata[3]) != 10:
+    elif len(customer_data[3]) != 10:
         massage +=("Phon number is not valid. Must contain 10 digits\n")
-    elif not (customer_tata[4].lstrip("-")).isdigit():
+    elif not (customer_data[4].lstrip("-")).isdigit():
         massage +=("Debt is not valid. Must contain only digits\n")
     
     elif len(date_split) != 3:
@@ -74,7 +73,7 @@ def customer_checking(customer_tata: list):
     else:
         correct = True
     try:
-        float(customer_tata[4])
+        float(customer_data[4])
     except ValueError:
         massage +=("Debt must be numbers only\n")
         correct = False
@@ -101,6 +100,7 @@ def add_customer(customer_data):
         lname_bst.add_node(new_customer)
         debt_bst.add_node(new_customer)
         ID_tree.add_node(new_customer)
+        date_tree.add_node(new_customer)
         return "The consumer has been successfully added"
     else:
         old_debt = existing_customer.debt
@@ -135,12 +135,14 @@ fname_bst = bst.Fname_tree()
 lname_bst = bst.Lname_tree()
 debt_bst = bst.Debt_tree()
 ID_tree = bst.Id_tree()
+date_tree = bst.Date_tree()
 
 for customer in customers.values():
     fname_bst.add_node(customer)
     lname_bst.add_node(customer)
     debt_bst.add_node(customer)
     ID_tree.add_node(customer)
+    date_tree.add_node(customer)
 
 
 def is_israeli_id(id):
@@ -205,11 +207,22 @@ def q_select(query):
         elif query[2] == "!=":
             filtered_list = ID_tree.search_different(int(query[3]))
 
+    elif query[1] == "date":
+        if query[2] == "=":
+            filtered_list = date_tree.search(query[3])
+        elif query[2] == ">":
+            filtered_list = date_tree.search_high(query[3])
+        elif query[2] == "<":
+            filtered_list = date_tree.search_low(query[3])
+        elif query[2] == "!=":
+            filtered_list = date_tree.search_different(query[3])       
+
 
     # except:
     #     return "The query is invalid"
     if filtered_list:
-        filtered_list.sort(key=lambda customer: customer.debt)    
+        if  type(filtered_list) is list and len(filtered_list) > 1:    
+            filtered_list.sort(key=lambda customer: customer.debt)    
         return filtered_list
     else:
         return "no result"
@@ -272,7 +285,7 @@ while True:
         print(to_send)
         n = 1
         for customer in to_send:
-            to_send = (f"name: {customer.fname} {customer.lname}, ID: {customer.id}, phone: {customer.phone}, debt: {customer.debt}, date: {customer.data[:-1]}")
+            to_send = (f"name: {customer.fname} {customer.lname}, ID: {customer.id}, phone: {customer.phone}, debt: {customer.debt}, date: {customer.date[:-1]}")
             print(n, to_send)
             n += 1
             to_send = to_send.encode('utf-8')
