@@ -19,9 +19,10 @@ while True:
     client_socket.send(message.encode('utf-8'))
     while True:   
         data = client_socket.recv(4096)
+        print(f"{data.decode('utf-8')}")
         if "$finish$" in data.decode('utf-8'):
             break
-        print(f"{data.decode('utf-8')}\n")
+        
 
 
     

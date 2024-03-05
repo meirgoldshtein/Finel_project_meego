@@ -380,7 +380,7 @@ class Id_tree:
         if temp.customer.id <= id:
             return self.search_high(id, temp.right)
         elif temp.customer.id > id:
-            return [temp.customer] + self.search_high(id, temp.right)+self.search_high(id, temp.left)
+            return [temp.customer] + self.search_high(id, temp.right) + self.search_high(id, temp.left)
 
     def search_low(self, id, temp="start"):
         
@@ -468,7 +468,7 @@ class Date_tree:
         if temp.customer.data <= data:
             return self.search_high(data, temp.right)
         elif temp.customer.data > data:
-            return [temp.customer] + self.search_high(data, temp.right)+self.search_high(data, temp.left)
+            return [temp.customer] + self.search_high(data, temp.right) + self.search_high(data, temp.left)
 
     def search_low(self, data, temp="start"):
         
@@ -477,12 +477,10 @@ class Date_tree:
                
         if temp == "start":
             temp = self.root
-            target_list = []
         if temp.customer.data <= data:
-            target_list.append(temp.customer)
-            return[temp.customer]+ self.search_high(data, temp.right)+self.search_high(data, temp.left)
+            return[temp.customer]+ self.search_low(data, temp.right)+self.search_low(data, temp.left)
         elif temp.customer.data > data:           
-            return self.search_high(data, temp.left)
+            return self.search_low(data, temp.left)
 
     
     def search_different(self, data, temp="start"):
@@ -493,7 +491,7 @@ class Date_tree:
         if temp == "start":
             temp = self.root
         if temp.customer.data != data:
-            return [temp.customer] + self.search_high(data, temp.right) + self.search_high(data, temp.left) 
+            return [temp.customer] + self.search_different(data, temp.right) + self.search_different(data, temp.left) 
         else:
-            return self.search_high(data, temp.right) + self.search_high(data, temp.left) 
+            return self.search_different(data, temp.right) + self.search_different(data, temp.left) 
         

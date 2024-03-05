@@ -196,14 +196,14 @@ def q_select(query):
         filtered_list = debt_bst.search_different(int(query[3])) 
 
     elif query[1] == "id":
-        if query[3] == "=":
-            filtered_list = ID_tree.search(query[4])
-        elif query[3] == ">":
-            filtered_list = ID_tree.search_high(query[4])
-        elif query[3] == "<":
-            filtered_list = ID_tree.search_low(query[4])
-        elif query[3] == "!=":
-            filtered_list = ID_tree.search_different(query[4])
+        if query[2] == "=":
+            filtered_list = ID_tree.search(int(query[3]))
+        elif query[2] == ">":
+            filtered_list = ID_tree.search_high(int(query[3]))
+        elif query[2] == "<":
+            filtered_list = ID_tree.search_low(int(query[3]))
+        elif query[2] == "!=":
+            filtered_list = ID_tree.search_different(int(query[3]))
 
 
     # except:
@@ -261,19 +261,22 @@ def processing(query):
 
 
 client_socket, client_address = server_socket.accept()
+print(f"Accepted connection from {client_address}")
 while True:
     
-    print(f"Accepted connection from {client_address}")
+    
     query = client_socket.recv(4096).decode('utf-8')   
     to_send = processing(query)
     end = "$finish$".encode('utf-8')
     if type(to_send) is list:
         print(to_send)
+        n = 1
         for customer in to_send:
-            to_send = (f"name: {customer.fname} {customer.lname}, ID: {customer.id}, phone: {customer.phone}, debt: {customer.debt}, date: {customer.data}\n")
+            to_send = (f"name: {customer.fname} {customer.lname}, ID: {customer.id}, phone: {customer.phone}, debt: {customer.debt}, date: {customer.data[:-1]}")
+            print(n, to_send)
+            n += 1
             to_send = to_send.encode('utf-8')
             client_socket.send(to_send)
-            print("miaue")
         
     
     else:
